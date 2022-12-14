@@ -1,4 +1,5 @@
 #! /bin/bash
+#need '-lm' for math.h library
 
 gcc -pthread -o main \
      server/server.c \

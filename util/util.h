@@ -6,13 +6,12 @@
 #include <stdbool.h>
 #include <assert.h>
 
-
-// Copy substring 'in', between left and right delimiters, into 'out'.
-// return dimension
-int stringInside(const char *, char, char, char *, int);
-void stringInsideSquareBrachet(const char *, char *);
+/*
+Gets the string between the square brackets 'in', and stores it in the string 'out'.
+Return string dimension.
+*/
+int stringInsideSquareBracket(const char *input, char *output);
 bool writeOnFile(const char *filename, Pothole *pothole);
-void buildJsonString(const list_node* node, char *to_send);
-
+void buildJsonString(const list_node *node, char *to_send);
 
 #endif // !UTIL_H

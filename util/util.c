@@ -6,24 +6,16 @@
 #include "../data_structure/kdtree/kdtree.h"
 #include "../data_structure/entity/user.h"
 
-// da modificare
-int stringInside(const char *in, char left, char right, char *out, int maxLen)
+
+int stringInsideSquareBracket(const char *in,char *out)
 {
-    int strStart, strEnd;
-    unsigned int strLen = strlen(in);
-
-    for (strStart = 0; strStart < strLen && in[strStart] != left; ++strStart)
-        ;
-    strStart++;
-    for (strEnd = strStart; strEnd < strLen && in[strEnd] != right; ++strEnd)
-        ;
-    if (strEnd <= strStart || strEnd - strStart >= maxLen)
-        return 0;
-
-    memcpy(out, in + strStart, strEnd - strStart);
-    out[strEnd - strStart] = '\0';
-
-    return strEnd - strStart;
+    /*
+    %*[^(]  read and discard everything until it finds a square bracket
+    (       read and discard the first square bracket
+    %[^)]   read and store up up to (but not including) the closing square bracket
+    %*[^\n] read and discard up to (but not including) the newline
+    */
+    return sscanf(in, "%*[^[][%[^]]%*[^\n]", out);
 }
 
 bool writeOnFile(const char *filename, Pothole *pothole)
@@ -35,7 +27,6 @@ bool writeOnFile(const char *filename, Pothole *pothole)
     fclose(file);
     return true;
 }
-
 
 /*
 Build and return a json string from a list of photoles.
@@ -58,7 +49,7 @@ void buildJsonString(const list_node *node, char *json_string)
             strcpy(tmp, strcat(tmp, ","));
         else
         {
-            strcpy(tmp, strcat(tmp, "]}\n")); 
+            strcpy(tmp, strcat(tmp, "]}\n"));
             tmp[strlen(tmp)] = '\0';
         }
         strcpy(json_string, strcat(json_string, tmp));

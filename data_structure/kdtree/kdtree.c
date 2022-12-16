@@ -29,7 +29,7 @@ KDTree *buildKDTreeFromFile(const char *filename)
 
         while (getline(&currentLine, &strLen, file) != -1)
         {
-            stringInside(currentLine, '[', ']', insideBrachet, BUFSIZ);
+            stringInsideSquareBracket(currentLine, insideBrachet);
             double latitude = 0, longitude = 0, variation = 0;
             char *username = NULL;
 
@@ -79,7 +79,7 @@ KDTree *buildKDTreeFromFile(const char *filename)
         free(currentLine);
         fclose(file);
     }
-    printf("[+]Tree build\n");
+    printf("[+]Tree built\n");
 
     return tree;
 }

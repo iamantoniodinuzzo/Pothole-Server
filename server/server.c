@@ -20,7 +20,7 @@ void sendMsg(const User *user, const char *msg)
 bool setUsername(User *user, const char *msg)
 {
     char username[USERNAME_LEN];
-    int len = stringInside(msg, '[', ']', username, USERNAME_LEN);
+    int len = stringInsideSquareBracket(msg, username);
 
     for (int i = 0; i < len; ++i)
     {
@@ -41,7 +41,7 @@ void add_hole(User *user, const char *msg, KDTree *tree)
     double latitude = 0, longitude = 0, variation = 0;
 
     bzero(buffer, sizeof(buffer));
-    stringInside(msg, '[', ']', buffer, 2064);
+    stringInsideSquareBracket(msg, buffer);
 
     // get latitude
     char *token = strtok(buffer, ";");
@@ -104,7 +104,7 @@ void send_threshold(const User *user, KDTree *tree)
 void send_holes_by_range(User *user, char *msg, KDTree *tree)
 {
     char buffer[2064];
-    stringInside(msg, '[', ']', buffer, 2064);
+    stringInsideSquareBracket(msg, buffer);
     double latitude = 0, longitude = 0;
     int range = 0;
 

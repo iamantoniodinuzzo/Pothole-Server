@@ -38,15 +38,39 @@ bool setUsername(User *user, const char *msg)
 bool add_hole(User *user, const char *msg, KDTree *tree)
 {
     char buffer[2064];
+    double latitude = 0, longitude = 0, variation = 0;
     buffer[sizeof(buffer)] = '\0';
-    double values[3] = {0};
 
     stringInsideSquareBracket(msg, sizeof(buffer), buffer);
 
-    extractPotholeFromMsg(buffer, values);
+    // get latitude
+    char *token = strtok(buffer, ";");
+    if (token == NULL)
+    {
+        perror("[-]Latitude not valid!");
+        return false;
+    }
+    latitude = atof(token);
 
+    // get longitude
+    token = strtok(NULL, ";");
+    if (token == NULL)
+    {
+        perror("[-]Longitude not valid!");
+        return false;
+    }
+    longitude = atof(token);
+
+    // get variation
+    token = strtok(NULL, ";");
+    if (token == NULL)
+    {
+        perror("[-]Variation not valid!");
+        return false;
+    }
+    variation = atoi(token);
     // build new pothole
-    Pothole *new_pothole = newPothole(user, values[0], values[1], values[2]);
+    Pothole *new_pothole = newPothole(user, latitude, longitude, variation);
 
     // add new pothole into tree
     tree->root = insert(tree, new_pothole);
@@ -81,7 +105,7 @@ void send_threshold(const User *user, KDTree *tree)
     printf("Sending threshold (%s) to user (%s)\n", threshold, user->username);
 }
 
-void send_holes_by_range(User *user, char *msg, KDTree *tree)
+bool send_holes_by_range(User *user, char *msg, KDTree *tree)
 {
     char buffer[2064];
     stringInsideSquareBracket(msg, sizeof(buffer), buffer);
@@ -93,7 +117,7 @@ void send_holes_by_range(User *user, char *msg, KDTree *tree)
     if (token == NULL)
     {
         perror("[-]Latitude not valid!");
-        return;
+        return false;
     }
     latitude = atof(token);
 
@@ -102,7 +126,7 @@ void send_holes_by_range(User *user, char *msg, KDTree *tree)
     if (token == NULL)
     {
         perror("[-]Longitude not valid!");
-        return;
+        return false;
     }
     longitude = atof(token);
 
@@ -111,7 +135,7 @@ void send_holes_by_range(User *user, char *msg, KDTree *tree)
     if (token == NULL)
     {
         perror("[-]Range not valid!");
-        return;
+        return false;
     }
     range = atoi(token);
 
@@ -123,18 +147,26 @@ void send_holes_by_range(User *user, char *msg, KDTree *tree)
     center->latitude = latitude;
     center->longitude = longitude;
 
-    printf("Find potholes within a radius (%d), from the center (lat:%f, lng:%f) for user (%s)\n", range, latitude, longitude, user->username);
-
     // get all potholes by radius
     List *result = search_by_radius(tree, range, center);
-    // build JSON as response
-    char json[50000] = "{\"potholes\":[";
-    buildJsonString(result->head, json);
-    sendMsg(user, json);
+    if (result->head != NULL)
+    {
+        printf("[+]Find potholes within a radius (%d), from the center (lat:%f, lng:%f) for user (%s)\n", range, latitude, longitude, user->username);
+        // build JSON as response
+        char json[50000] = "{\"potholes\":[";
+        buildJsonString(result->head, json);
+        sendMsg(user, json);
 
-    destroyList(result);
+        destroyList(result);
 
-    json[sizeof(json)] = '\0';
+        json[sizeof(json)] = '\0';
+        return true;
+    }
+    else
+    {
+        printf("[-]No potholes were found\n");
+        return false;
+    }
 }
 
 bool dispatch(User *user, int command, char *msg, KDTree *tree)
@@ -145,23 +177,22 @@ bool dispatch(User *user, int command, char *msg, KDTree *tree)
         printf("User (%s) want add a hole\n", user->username);
         add_hole(user, msg, tree);
         return true;
-    case HOLE_LIST:
-        printf("User (%s) want list of hole\n", user->username);
-        send_holes(user, tree);
-        return true;
     case TRESHOLD:
-        printf("User (%s) want threashold\n", user->username);
+        printf("User (%s) want threshold\n", user->username);
         send_threshold(user, tree);
         return true;
     case HOLE_LIST_BY_RANGE:
         printf("User (%s) want list of hole by range\n", user->username);
-        send_holes_by_range(user, msg, tree);
+        if (!send_holes_by_range(user, msg, tree))
+            printf("[-] Unable to send list of potholes by range to user (%s)\n", user->username);
+        else
+            printf("[+] List of potholes by radius sent correctly to user (%s)\n",user->username);
         return true;
     case DELETE_HOLE:
         printf("User (%s) want delete a hole\n", user->username);
         return true;
     case EXIT:
-        printf("User (%s) want exit\n", user->username);
+        printf("User (%s) want exit...\n", user->username);
         return false;
     default:
         printf("Unknown command (%d) by user (%s), full message: %s\n", command, user->username, msg);

@@ -99,8 +99,8 @@ void send_holes(const User *user, KDTree *tree)
 
 void send_threshold(const User *user, KDTree *tree)
 {
-    char threshold[5];
-    sprintf(threshold, "%d\n", 15);
+    char* threshold;
+    sprintf(threshold, "%f\n", calculateThreasholdFromFile("data/data.txt"));
     sendMsg(user, threshold);
     printf("Sending threshold (%s) to user (%s)\n", threshold, user->username);
 }
@@ -186,7 +186,7 @@ bool dispatch(User *user, int command, char *msg, KDTree *tree)
         if (!send_holes_by_range(user, msg, tree))
             printf("[-] Unable to send list of potholes by range to user (%s)\n", user->username);
         else
-            printf("[+] List of potholes by radius sent correctly to user (%s)\n",user->username);
+            printf("[+] List of potholes by radius sent correctly to user (%s)\n", user->username);
         return true;
     /*case DELETE_HOLE:
         printf("User (%s) want delete a hole\n", user->username);

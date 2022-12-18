@@ -26,4 +26,6 @@ Build and return a json string from a list of photoles.
 */
 void buildJsonString(const list_node *node, char *to_send);
 
+double calculateThreasholdFromFile(const char *filename);
+
 #endif // !UTIL_H

@@ -29,7 +29,7 @@ KDTree *buildKDTreeFromFile(const char *filename)
 
         while (getline(&currentLine, &strLen, file) != -1)
         {
-            stringInsideSquareBracket(currentLine, insideBrachet);
+            stringInsideSquareBracket(currentLine,sizeof(insideBrachet), insideBrachet);
             double latitude = 0, longitude = 0, variation = 0;
             char *username = NULL;
 

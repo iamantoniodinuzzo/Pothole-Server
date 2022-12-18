@@ -7,15 +7,28 @@
 #include "../data_structure/entity/user.h"
 
 
-int stringInsideSquareBracket(const char *in,char *out)
+long stringInsideSquareBracket(const char *in, long out_size, char *out)
 {
-    /*
-    %*[^(]  read and discard everything until it finds a square bracket
-    (       read and discard the first square bracket
-    %[^)]   read and store up up to (but not including) the closing square bracket
-    %*[^\n] read and discard up to (but not including) the newline
-    */
-    return sscanf(in, "%*[^[][%[^]]%*[^\n]", out);
+    char *left = strchr(in, '[');
+    if (left)
+    {
+        char *right = strchr(++left, ']');
+        if (right)
+        {
+            long substring_length = right - left;
+            if (out_size > substring_length)
+            {
+                memcpy(out, left, substring_length);
+                out[substring_length] = '\0';
+                return substring_length;
+            }
+        }
+    }
+    if (out_size > 0)
+    {
+        out[0] = 0;
+    }
+    return -1;
 }
 
 bool writeOnFile(const char *filename, Pothole *pothole)

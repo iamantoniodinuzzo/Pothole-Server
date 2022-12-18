@@ -15,6 +15,15 @@ Gets the string between the square brackets 'in', and stores it in the string 'o
 long stringInsideSquareBracket(const char *in, long out_size, char *out);
 
 bool writeOnFile(const char *filename, Pothole *pothole);
+/*
+Build and return a json string from a list of photoles.
+{
+    potholes:[
+        {"user":<username>,"lat":<latitude>,"lng":<longitude>,"var":<variation>},
+        //...
+    ]
+}
+*/
 void buildJsonString(const list_node *node, char *to_send);
 
 #endif // !UTIL_H

@@ -35,54 +35,34 @@ bool setUsername(User *user, const char *msg)
     return false;
 }
 
-void add_hole(User *user, const char *msg, KDTree *tree)
+bool add_hole(User *user, const char *msg, KDTree *tree)
 {
     char buffer[2064];
-    double latitude = 0, longitude = 0, variation = 0;
     buffer[sizeof(buffer)] = '\0';
+    double values[3] = {0};
 
-    int len = stringInsideSquareBracket(msg, sizeof(buffer), buffer);
+    stringInsideSquareBracket(msg, sizeof(buffer), buffer);
 
-    // get latitude
-    char *token = strtok(buffer, ";");
-    if (token == NULL)
-    {
-        perror("[-]Latitude not valid!\n");
-        return;
-    }
-    latitude = atof(token);
-
-    // get longitude
-    token = strtok(NULL, ";");
-    if (token == NULL)
-    {
-        perror("[-]Longitude not valid!\n");
-        return;
-    }
-    longitude = atof(token);
-
-    // get variation
-    token = strtok(NULL, ";");
-    if (token == NULL)
-    {
-        perror("[-]Variation not valid!\n");
-        return;
-    }
-    variation = atof(token);
+    extractPotholeFromMsg(buffer, values);
 
     // build new pothole
-    Pothole *new_pothole = newPothole(user, latitude, longitude, variation);
+    Pothole *new_pothole = newPothole(user, values[0], values[1], values[2]);
 
     // add new pothole into tree
     tree->root = insert(tree, new_pothole);
 
     // add new pothole into file
     if (!writeOnFile("data/data.txt", new_pothole))
-        printf("[-]This pothole is not memrize into file!\n");
+    {
+        printf("[-]Pothole not stored in the file!\n");
+        return false;
+    }
     else
+    {
         printf("[+]Store into file successfully!\n");
-
-    printf("User (%s) added a pothole [lat:%f, lng:%f ,var:%f]\n", new_pothole->user->username, new_pothole->latitude, new_pothole->longitude, new_pothole->variation);
+        printf("User (%s) added a pothole [lat:%f, lng:%f ,var:%f]\n", new_pothole->user->username, new_pothole->latitude, new_pothole->longitude, new_pothole->variation);
+        return true;
+    }
 }
 
 void send_holes(const User *user, KDTree *tree)
@@ -151,10 +131,6 @@ void send_holes_by_range(User *user, char *msg, KDTree *tree)
     char json[50000] = "{\"potholes\":[";
     buildJsonString(result->head, json);
     sendMsg(user, json);
-
-    /*char to_send[50000] = {0};
-    sprintf(to_send, "%s", json);
-    sendMsg(user, to_send);*/
 
     destroyList(result);
 

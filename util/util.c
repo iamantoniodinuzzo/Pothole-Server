@@ -41,15 +41,7 @@ bool writeOnFile(const char *filename, Pothole *pothole)
     return true;
 }
 
-/*
-Build and return a json string from a list of photoles.
-{
-    potholes:[
-        {"user":<username>,"lat":<latitude>,"lng":<longitude>,"var":<variation>},
-        //...
-    ]
-}
-*/
+
 void buildJsonString(const list_node *node, char *json_string)
 {
     char tmp[1000];

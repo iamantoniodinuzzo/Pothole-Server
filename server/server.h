@@ -8,7 +8,6 @@ enum Command
 {
     SET_USERNAME = 'u', // usage: u[username]
     NEW_HOLE = 'h',     // usage: h[lat;lng;variation]
-    HOLE_LIST = 'l',
     HOLE_LIST_BY_RANGE = 'r', // uage: r[lat;lng;range]
     DELETE_HOLE = 'd', //usage d[lat;lng]
     TRESHOLD = 't',

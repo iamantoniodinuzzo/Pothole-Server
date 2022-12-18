@@ -7,12 +7,23 @@
 #include <assert.h>
 
 
-// Copy substring 'in', between left and right delimiters, into 'out'.
-// return dimension
-int stringInside(const char *, char, char, char *, int);
-void stringInsideSquareBrachet(const char *, char *);
-bool writeOnFile(const char *filename, Pothole *pothole);
-void buildJsonString(const list_node* node, char *to_send);
+/*
+Gets the string between the square brackets 'in', and stores it in the string 'out'.
+ Return length of substring.
+ Return -1 when not found or out[] too small.
+*/
+long stringInsideSquareBracket(const char *in, long out_size, char *out);
 
+bool writeOnFile(const char *filename, Pothole *pothole);
+/*
+Build and return a json string from a list of photoles.
+{
+    potholes:[
+        {"user":<username>,"lat":<latitude>,"lng":<longitude>,"var":<variation>},
+        //...
+    ]
+}
+*/
+void buildJsonString(const list_node *node, char *to_send);
 
 #endif // !UTIL_H

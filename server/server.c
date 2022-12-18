@@ -188,9 +188,9 @@ bool dispatch(User *user, int command, char *msg, KDTree *tree)
         else
             printf("[+] List of potholes by radius sent correctly to user (%s)\n",user->username);
         return true;
-    case DELETE_HOLE:
+    /*case DELETE_HOLE:
         printf("User (%s) want delete a hole\n", user->username);
-        return true;
+        return true;*/
     case EXIT:
         printf("User (%s) want exit...\n", user->username);
         return false;

@@ -47,7 +47,7 @@ int main()
 
     printf("[+]Bind to port %d\n", PORT);
 
-    //--- Load potholes from file
+    //Load potholes from file
     tree = buildKDTree();
 
     check(listen(server, SERVER_BACKLOG), "[-]Error Listening.\n");
@@ -109,7 +109,7 @@ void *handle_connection(void *p_client_cocket)
     // ask to client to set an username
     if (!setUsername(user, buffer))
     {
-        printf("Invalid username set by [%d], closing connection", user->client_fd);
+        printf("Invalid username set by [%d], closing connection\n", user->client_fd);
         close_connection(user);
     }
 

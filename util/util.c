@@ -47,6 +47,7 @@ double calculateThreasholdFromFile(const char *filename)
     if (file != NULL)
     {
         double threshold = 0;
+        double i;
         int counter = 0;
         char buffer[1000];
 
@@ -56,7 +57,8 @@ double calculateThreasholdFromFile(const char *filename)
             char *value = strrchr(buffer, ';');
             if (value != NULL)
             {
-                threshold += atof(value);
+                sscanf(value, ";%lf]", &i);
+                threshold += i;
             }
         }
         fclose(file);

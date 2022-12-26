@@ -6,7 +6,6 @@
 #include "../data_structure/kdtree/kdtree.h"
 #include "../data_structure/entity/user.h"
 
-
 long stringInsideSquareBracket(const char *in, long out_size, char *out)
 {
     char *left = strchr(in, '[');
@@ -41,6 +40,39 @@ bool writeOnFile(const char *filename, Pothole *pothole)
     return true;
 }
 
+double calculateThreasholdFromFile(const char *filename)
+{
+    FILE *file = fopen(filename, "r");
+    assert(file);
+    if (file != NULL)
+    {
+        double threshold = 0;
+        double i;
+        int counter = 0;
+        char buffer[1000];
+
+        while (fgets(buffer, sizeof(buffer), file) != NULL)
+        {
+            counter++;
+            char *value = strrchr(buffer, ';');
+            if (value != NULL)
+            {
+                sscanf(value, ";%lf]", &i);
+                threshold += i;
+            }
+        }
+        fclose(file);
+
+        if (threshold == 0)
+            return 5;
+        else
+            return threshold / counter;
+    }
+    else
+    {
+        return 5;
+    }
+}
 
 void buildJsonString(const list_node *node, char *json_string)
 {

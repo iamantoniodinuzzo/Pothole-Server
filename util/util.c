@@ -64,13 +64,13 @@ double calculateThreasholdFromFile(const char *filename)
         fclose(file);
 
         if (threshold == 0)
-            return 5;
+            return 15;
         else
             return threshold / counter;
     }
     else
     {
-        return 5;
+        return 15;
     }
 }
 

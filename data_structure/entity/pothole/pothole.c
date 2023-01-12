@@ -3,12 +3,33 @@
 #include <stdlib.h>
 #include <stdio.h>
 /*
-Cx e Cy rappresentano le coordinate del centro
+Haversine formula to find distance between two points on a sphere
 */
 bool isIntoRadius(const double cx, const double cy, int radius, const double x, const double y)
 {
-    double distance = sqrt(pow((cx - x), 2) + pow((cy - y), 2));
-    return (distance > radius) ? false : true;
+  
+    // distance between latitudes
+        // and longitudes
+        double radius_km = (double)radius/1000;
+        double dLat = (x - cx) *
+                      M_PI / 180.0;
+        double dLon = (y - cy) *
+                      M_PI / 180.0;
+ 
+        // convert to radians
+        double n_cx = (cx) * M_PI / 180.0;
+        double n_x = (x) * M_PI / 180.0;
+ 
+        // apply formulae
+        double a = pow(sin(dLat / 2), 2) +
+                   pow(sin(dLon / 2), 2) *
+                   cos(n_cx) * cos(n_x);
+        double rad = 6371;
+        double c = 2 * asin(sqrt(a));
+
+        double distance = rad * c;
+
+    return (distance > radius_km) ? false : true;
 }
 
 int comparePotholesByRange(Pothole *p1, Pothole *p2, int range)
